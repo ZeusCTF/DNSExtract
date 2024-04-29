@@ -14,5 +14,5 @@ def main():
 
 
     #This performs a web request that returns an associated IP address: https://scapy.readthedocs.io/en/latest/usage.html#dns-requests
-    ans = sr1(IP(dst="8.8.8.8")/UDP(sport=RandShort(), dport=53)/DNS(rd=1,qd=DNSQR(qname=f"{subdomain}.secdev.org",qtype="A")))
+    ans = sr1(IP(dst="8.8.8.8")/UDP(sport=RandShort(), dport=53)/DNS(rd=1,qd=DNSQR(qname=f"{subdomain}.example.com",qtype="A")))
     print(ans.an[0].rdata)
